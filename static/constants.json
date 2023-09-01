@@ -1,0 +1,28 @@
+{
+  "doctors": [
+    { "name": "Dt. Berfin Bartık", "image": "./assets/berfin.jpg" },
+    { "name": "Dt. Ali Barkiyer", "image": "./assets/ali.jpg" },
+    { "name": "Uzm. Dt. Serhat Özdemir", "image": "./assets/serhat.jpg" },
+    { "name": "Dt. Yunus Emre Hergil", "image": "./assets/yunus.jpg" },
+    { "name": "Dt. İbrahim Halil Topal ", "image": "./assets/ibrahim.jpg" },
+    { "name": "Dt. Halil Öcal", "image": "./assets/halil.jpg" },
+    { "name": "Uzm. Dt. Bekir Durmaz", "image": "./assets/bekir.jpg" },
+    { "name": "Dt. Arif Hikmet İzol", "image": "./assets/arif.jpg" },
+    { "name": "Dt. Muammer Ayçiçek", "image": "./assets/muammer.jpg" },
+    { "name": "Dt. Müslüm Abacılar", "image": "./assets/muslum.jpg" }
+  ],
+  "services": [
+    {
+      "name": "Tooth Extraction",
+      "icon": "./assets/icons/extraction.png"
+    },
+    {
+      "name": "Tooth Filling",
+      "icon": "./assets/icons/tooth-filling.png"
+    },
+    {
+      "name": "Tooth Canal Treatment",
+      "icon": "./assets/icons/root-canal.png"
+    }
+  ]
+}

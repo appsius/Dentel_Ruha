@@ -32,13 +32,7 @@ let sectionNum = 0;
 
 let selectedTeeth = [],
   selectedService = {},
-  selectedDoctor = {},
-  selectedDate = new Date(),
-  isTeethSelected = false,
-  isDoctorSelected = false,
-  isServiceSelected = false,
-  isDateSelected = false,
-  isDateTimeSelected = false;
+  selectedDoctor = {};
 
 // Randevu - Appointment
 let appointment = {
@@ -73,6 +67,14 @@ for (let tParent of teethParents) {
       selectedTeeth.push(toothNum);
     }
   });
+}
+
+// Set teeth styles and selected teeth to default
+function setTeethToDefault() {
+  selectedTeeth = [];
+  for (let tParent of teethParents) {
+    tParent.style.fill = "transparent";
+  }
 }
 
 // Bug-fix, make tooth children lines click work, hide all tooth parts except outer line
@@ -135,10 +137,20 @@ for (let service of services) {
     selectedService.text = serviceText;
     selectedService.imageSrc = serviceImg;
     appointment.service = selectedService;
-
-    // Is service selected
-    isServiceSelected = true;
   });
+}
+
+// Set services styles and selected service to default
+function setServiceToDefault() {
+  for (let s of services) {
+    s.style.backgroundColor = " #e2e2e2";
+    s.style.color = "rgb(0, 0, 0)";
+
+    // Set appointment service to clicked one
+    selectedService.text = "";
+    selectedService.imageSrc = "";
+    appointment.service = {};
+  }
 }
 
 // HANDLE DOCTORS //
@@ -151,10 +163,10 @@ for (let doctor of doctors) {
       doctor.getElementsByClassName("doctor-name")[0].innerText;
     const doctorImg = doctor.getElementsByClassName("doctor-image")[0].src;
 
-    for (let s of doctors) {
+    for (let d of doctors) {
       // Colorize clicked doctor
-      s.style.backgroundColor = " #e2e2e2";
-      s.style.color = "rgb(0, 0, 0)";
+      d.style.backgroundColor = " #e2e2e2";
+      d.style.color = "rgb(0, 0, 0)";
       appointment.doctor = {};
     }
 
@@ -166,10 +178,20 @@ for (let doctor of doctors) {
     selectedDoctor.text = doctorText;
     selectedDoctor.imageSrc = doctorImg;
     appointment.doctor = selectedDoctor;
-
-    // Is doctor selected
-    isDoctorSelected = true;
   });
+}
+
+// Set doctor styles and doctor to default
+function setDoctorToDefault() {
+  for (let d of doctors) {
+    d.style.backgroundColor = " #e2e2e2";
+    d.style.color = "rgb(0, 0, 0)";
+
+    // Set appointment doctor to clicked one
+    selectedDoctor.text = "";
+    selectedDoctor.imageSrc = "";
+    appointment.doctor = {};
+  }
 }
 
 // HANDLE DATES //
@@ -192,7 +214,7 @@ setInitials();
 
 // Set first day of week active initially
 function setFirstDayActive() {
-  let firstDayToday = weekDays[0];
+  let firstDayToday = weekDays[1];
   firstDayToday.style.backgroundColor = "#002b5b";
   firstDayToday.getElementsByTagName("span")[0].style.color = "white";
   getDateDesc(new Date(firstDayToday["data-date"]));
@@ -284,7 +306,6 @@ function detectClickedDay() {
 
       let customDate = getDateDesc(new Date(e.target["data-date"]), "");
       appointment.date = customDate;
-      isDateSelected = true;
     });
   });
 }
@@ -354,7 +375,6 @@ function setClickedDaysDefault() {
     d.style.backgroundColor = "rgb(239 239 239)";
     d.getElementsByTagName("span")[0].style.color = "black";
     appointment.date = new Date();
-    isDateSelected = false;
   }
 }
 
@@ -369,14 +389,14 @@ function setClickedTimesDefault() {
 }
 setClickedTimesDefault();
 
-function activeFirstTime() {
+// Active tomorow first appointment session
+function setFirstTimeActive() {
   times[0].style.backgroundColor = "#002b5b";
   times[0].getElementsByTagName("span")[0].style.color = "white";
   timeDesc.textContent = times[0].textContent;
   appointment.time = times[0].textContent.replace(/\s/g, "");
-  isDateTimeSelected = true;
 }
-activeFirstTime();
+setFirstTimeActive();
 
 function handleTimeSelection() {
   Array.from(times).forEach((timeEl) => {
@@ -389,7 +409,6 @@ function handleTimeSelection() {
 
       appointment.time = timeEl.textContent.replace(/\s/g, "");
       timeDesc.textContent = timeEl.textContent;
-      isDateTimeSelected = true;
     });
   });
 }
@@ -450,48 +469,87 @@ btnContinue.addEventListener("click", function (e) {
 
   // Operation successfull
   if (sectionNum === 3) {
-    hideAllElse();
     btnContinue.style.display = "none";
     btnBack.style.display = "none";
 
+    hideAllElse();
     activateSuccessTitle();
     successSection.style.display = "flex";
+    setSuccessAppointment();
 
     setTimeout(() => {
       passivizeSuccessTitle();
       hideAllElse();
 
-      btnContinue.style.display = "block";
+      setAllToDefault();
       teethSection.style.display = "flex";
-    }, 100000);
+      btnContinue.style.display = "block";
+      btnContinue.textContent = "Select the Teeth";
+      sectionNum = 0;
+    }, 10000);
 
-    console.log(appointment);
-
-    sectionNum = 0;
+    // setAllToDefault();
     return;
   }
 });
 
+// Set all values to default
+function setAllToDefault() {
+  setTeethToDefault();
+  setServiceToDefault();
+  setDoctorToDefault();
+
+  setClickedDaysDefault();
+  setFirstDayActive();
+
+  setClickedTimesDefault();
+  setFirstTimeActive();
+}
+
 // Success title activation & passivization
 function activateSuccessTitle() {
   callToAction.textContent = "Your appointment is ready!";
+  callToAction.style.margin = "2.75rem 0 2.25rem";
 }
-
 function passivizeSuccessTitle() {
   callToAction.textContent =
     "Please select the teeth you want the treatment for.";
+  callToAction.style.margin = "1.75rem 0 1.25rem";
+}
+
+// Set appointment elements content
+function setSuccessAppointment() {
+  const teethContentEl = document.getElementsByClassName("success-teeth")[0];
+  const serviceContentEl =
+    document.getElementsByClassName("success-service")[0];
+  const doctorContentEl = document.getElementsByClassName("success-doctor")[0];
+  const dayContentEl = document.getElementsByClassName("success-day")[0];
+  const hourContentEl = document.getElementsByClassName("success-hour")[0];
+
+  // teethContentEl.textContent = appointment
+  const successCustomTeeths = appointment.teeth.join(" | ");
+  const successCustomService = appointment.service.text;
+  const successCustomDoctor = appointment.doctor.text;
+  const successCustomDay = getDateDesc(new Date(appointment.date), "");
+  const successCustomHour = appointment.time;
+
+  teethContentEl.textContent = successCustomTeeths;
+  serviceContentEl.textContent = successCustomService;
+  doctorContentEl.textContent = successCustomDoctor;
+  dayContentEl.textContent = successCustomDay;
+  hourContentEl.textContent = successCustomHour;
 }
 
 // Handling back button
 btnBack.addEventListener("click", function (e) {
   e.preventDefault();
-  // setIsSelecteds();
 
   // Go back to service selection
   if (sectionNum === 1) {
     hideAllElse();
     btnBack.style.display = "none";
     teethSection.style.display = "flex";
+    btnContinue.textContent = "Select the Teeth";
 
     sectionNum--;
     return;
@@ -502,6 +560,7 @@ btnBack.addEventListener("click", function (e) {
     hideAllElse();
     serviceSection.style.display = "flex";
     btnBack.textContent = "Back to Teeth";
+    btnContinue.textContent = "Select the Service";
 
     sectionNum--;
     return;
@@ -512,6 +571,7 @@ btnBack.addEventListener("click", function (e) {
     hideAllElse();
     doctorSection.style.display = "flex";
     btnBack.textContent = "Back to Service";
+    btnContinue.textContent = "Select Doctor";
 
     sectionNum--;
     return;

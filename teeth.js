@@ -155,6 +155,7 @@ function setServiceToDefault() {
 
 // HANDLE DOCTORS //
 // Handle doctor selection
+// TODO - Handle doctors dynamically
 for (let doctor of doctors) {
   doctor.addEventListener("click", function (e) {
     e.preventDefault();
@@ -460,7 +461,7 @@ btnContinue.addEventListener("click", function (e) {
     dateSection.style.display = "flex";
     btnContinue.textContent = "Select the Date and Time";
     callToAction.textContent =
-      "Please select the date & hour you want to appoint.";
+      "Please select the day & hour you want to appoint.";
     btnBack.textContent = "Bact to Doctor";
 
     sectionNum++;
@@ -486,9 +487,8 @@ btnContinue.addEventListener("click", function (e) {
       btnContinue.style.display = "block";
       btnContinue.textContent = "Select the Teeth";
       sectionNum = 0;
-    }, 10000);
+    }, 5000);
 
-    // setAllToDefault();
     return;
   }
 });
@@ -527,7 +527,7 @@ function setSuccessAppointment() {
   const hourContentEl = document.getElementsByClassName("success-hour")[0];
 
   // teethContentEl.textContent = appointment
-  const successCustomTeeths = appointment.teeth.join(" | ");
+  const successCustomTeeths = appointment.teeth.join(" - ");
   const successCustomService = appointment.service.text;
   const successCustomDoctor = appointment.doctor.text;
   const successCustomDay = getDateDesc(new Date(appointment.date), "");

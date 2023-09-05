@@ -8,6 +8,7 @@ body {
   background-color: #fafafa;
   margin: 0 0rem 5rem 0rem;
   overflow-y: hidden;
+  caret-color: transparent;
 }
 
 h1 {

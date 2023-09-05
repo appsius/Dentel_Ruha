@@ -459,7 +459,7 @@ btnContinue.addEventListener("click", function (e) {
     hideAllElse();
 
     dateSection.style.display = "flex";
-    btnContinue.textContent = "Select the Date and Time";
+    btnContinue.textContent = "Select the Date";
     callToAction.textContent =
       "Please select the day & hour you want to appoint.";
     btnBack.textContent = "Bact to Doctor";
@@ -468,15 +468,41 @@ btnContinue.addEventListener("click", function (e) {
     return;
   }
 
-  // Operation successfull
+  // Doctor selection done, hide it and got to date section
   if (sectionNum === 3) {
+    hideAllElse();
+
+    successSection.style.display = "flex";
+    setSuccessAppointment();
+    btnContinue.textContent = "Complete the Appointment";
+    callToAction.textContent = "Please complete the appointment.";
+    btnBack.textContent = "Bact to Date";
+
+    btnBack.style.width = "18rem";
+    btnContinue.style.width = "18rem";
+
+    sectionNum++;
+
+    if (
+      appointment.teeth.length < 1 ||
+      Object.keys(appointment.service) < 1 ||
+      Object.keys(appointment.service) < 1
+    ) {
+      btnContinue.style.pointerEvents = "none";
+    }
+
+    return;
+  }
+
+  // Operation successfull
+  if (sectionNum === 4) {
     btnContinue.style.display = "none";
     btnBack.style.display = "none";
+    setBtnStylesToDefault();
 
     hideAllElse();
     activateSuccessTitle();
-    successSection.style.display = "flex";
-    setSuccessAppointment();
+    // setSuccessAppointment();
 
     setTimeout(() => {
       passivizeSuccessTitle();
@@ -492,6 +518,11 @@ btnContinue.addEventListener("click", function (e) {
     return;
   }
 });
+
+function setBtnStylesToDefault() {
+  btnBack.style.width = "14rem";
+  btnContinue.style.width = "14rem";
+}
 
 // Set all values to default
 function setAllToDefault() {
@@ -510,11 +541,17 @@ function setAllToDefault() {
 function activateSuccessTitle() {
   callToAction.textContent = "Your appointment is ready!";
   callToAction.style.margin = "2.75rem 0 2.25rem";
+  callToAction.style.padding = ".5rem 2.25rem";
+  callToAction.style.backgroundColor = "#002b5b";
+  callToAction.style.color = "white";
 }
 function passivizeSuccessTitle() {
   callToAction.textContent =
     "Please select the teeth you want the treatment for.";
   callToAction.style.margin = "1.75rem 0 1.25rem";
+  callToAction.style.padding = "0";
+  callToAction.style.backgroundColor = "transparent";
+  callToAction.style.color = "#002b5b";
 }
 
 // Set appointment elements content
@@ -571,7 +608,21 @@ btnBack.addEventListener("click", function (e) {
     hideAllElse();
     doctorSection.style.display = "flex";
     btnBack.textContent = "Back to Service";
-    btnContinue.textContent = "Select Doctor";
+    btnContinue.textContent = "Select the Doctor";
+
+    sectionNum--;
+    return;
+  }
+
+  // Go back to doctor selection
+  if (sectionNum === 4) {
+    hideAllElse();
+    dateSection.style.display = "flex";
+    btnBack.textContent = "Back to Doctor";
+    btnContinue.textContent = "Select the Date";
+    btnContinue.style.pointerEvents = "visible";
+
+    setBtnStylesToDefault();
 
     sectionNum--;
     return;

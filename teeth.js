@@ -609,7 +609,8 @@ function setBtnStylesToDefault() {
 
 // Activate | passivize success title
 function setDescTitle() {
-  callToAction.textContent = "Your appointment is ready!";
+  callToAction.textContent =
+    "Your appointment is submitted successfully. Thanks.";
   callToAction.style.margin = "2.75rem 0 2.25rem";
   callToAction.style.padding = ".55rem 2.25rem";
   callToAction.style.backgroundColor = "#7cffee";

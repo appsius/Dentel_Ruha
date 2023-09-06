@@ -9,6 +9,14 @@ body {
   margin: 0 0rem 5rem 0rem;
   overflow-y: hidden;
   caret-color: transparent;
+
+  /* disable highlighting text */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 h1 {
@@ -17,6 +25,11 @@ h1 {
   letter-spacing: 1px;
   color: #002b5b;
   z-index: 5;
+}
+
+.call-to-action {
+  text-align: center;
+  font-size: 1.2rem;
 }
 
 .teeth svg {

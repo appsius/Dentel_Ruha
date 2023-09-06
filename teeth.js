@@ -415,113 +415,304 @@ function handleTimeSelection() {
 }
 handleTimeSelection();
 
-// HANDLE BTNS //
-hideAllElse();
-btnBack.style.display = "none";
-teethSection.style.display = "flex";
+// Initial load defaulting
+function setAtInitialsLoading() {
+  hideAllElse();
+  btnBack.style.display = "none";
+  teethSection.style.display = "flex";
+}
+setAtInitialsLoading();
 
 // Handle continue button
 btnContinue.addEventListener("click", function (e) {
   e.preventDefault();
 
-  // Teeth selection done, hide it and go to service selection
+  // Show service section
   if (sectionNum === 0) {
-    appointment.teeth = selectedTeeth;
-    hideAllElse();
-
-    serviceSection.style.display = "flex";
-    btnContinue.textContent = "Select the Service";
-    callToAction.textContent = "Please select the service you want to get.";
-
-    // Show btn back
-    btnBack.style.display = "block";
-    btnBack.textContent = "Bact to Teeth";
-
-    sectionNum++;
+    showServiceSection();
     return;
   }
 
-  // Service selection done, hide it and go to doctor section
+  // Show doctor section
   if (sectionNum === 1) {
-    hideAllElse();
-
-    doctorSection.style.display = "flex";
-    btnContinue.textContent = "Select the Doctor";
-    callToAction.textContent = "Please select the doctor you want to choose.";
-    btnBack.textContent = "Bact to Service";
-
-    sectionNum++;
+    showDoctorSection();
     return;
   }
 
-  // Doctor selection done, hide it and got to date section
+  // Show date section
   if (sectionNum === 2) {
-    hideAllElse();
-
-    dateSection.style.display = "flex";
-    btnContinue.textContent = "Select the Date";
-    callToAction.textContent =
-      "Please select the day & hour you want to appoint.";
-    btnBack.textContent = "Bact to Doctor";
-
-    sectionNum++;
+    showDateSection();
     return;
   }
 
-  // Doctor selection done, hide it and got to date section
+  // Show appointment complete card
   if (sectionNum === 3) {
-    hideAllElse();
-
-    successSection.style.display = "flex";
-    setSuccessAppointment();
-    btnContinue.textContent = "Complete the Appointment";
-    callToAction.textContent = "Please complete the appointment.";
-    btnBack.textContent = "Bact to Date";
-
-    btnBack.style.width = "18rem";
-    btnContinue.style.width = "18rem";
-
-    sectionNum++;
-
-    if (
-      appointment.teeth.length < 1 ||
-      Object.keys(appointment.service) < 1 ||
-      Object.keys(appointment.service) < 1
-    ) {
-      btnContinue.style.pointerEvents = "none";
-    }
-
+    showCompletionCard();
     return;
   }
 
-  // Operation successfull
+  // Show completed alert
   if (sectionNum === 4) {
-    btnContinue.style.display = "none";
-    btnBack.style.display = "none";
-    setBtnStylesToDefault();
-
-    hideAllElse();
-    activateSuccessTitle();
-    // setSuccessAppointment();
-
-    setTimeout(() => {
-      passivizeSuccessTitle();
-      hideAllElse();
-
-      setAllToDefault();
-      teethSection.style.display = "flex";
-      btnContinue.style.display = "block";
-      btnContinue.textContent = "Select the Teeth";
-      sectionNum = 0;
-    }, 5000);
-
+    alertAppointmentSuccess();
     return;
   }
 });
 
+// Show service selection
+function showServiceSection() {
+  appointment.teeth = selectedTeeth;
+  hideAllElse();
+
+  serviceSection.style.display = "flex";
+  btnContinue.textContent = "Select the Service";
+  callToAction.textContent = "Please select the service you want to get.";
+  btnBack.style.display = "block";
+  btnBack.textContent = "Bact to Teeth";
+  sectionNum++;
+}
+
+// Show doctor selection
+function showDoctorSection() {
+  hideAllElse();
+
+  doctorSection.style.display = "flex";
+  btnContinue.textContent = "Select the Doctor";
+  callToAction.textContent = "Please select the doctor you want to choose.";
+  btnBack.textContent = "Bact to Service";
+  sectionNum++;
+}
+
+// Show date section
+function showDateSection() {
+  hideAllElse();
+
+  dateSection.style.display = "flex";
+  btnContinue.textContent = "Select the Date";
+  callToAction.textContent =
+    "Please select the day & hour you want the appointment in.";
+  btnBack.textContent = "Bact to Doctor";
+  sectionNum++;
+}
+
+// Show appointment complete card
+function showCompletionCard() {
+  hideAllElse();
+
+  successSection.style.display = "flex";
+  setSuccessAppointment();
+  btnBack.textContent = "Bact to Date";
+  btnContinue.textContent = "Complete the Appointment";
+  btnBack.style.width = "18rem";
+  btnContinue.style.width = "18rem";
+  sectionNum++;
+
+  let notSelectedText = getNotSelectedText();
+  controlNotSelected(notSelectedText);
+}
+
+// Show appointment ready alert
+function alertAppointmentSuccess() {
+  btnContinue.style.display = "none";
+  btnBack.style.display = "none";
+
+  setBtnStylesToDefault();
+  hideAllElse();
+  setDescTitle();
+
+  setTimeout(() => {
+    resetDescTitle();
+    hideAllElse();
+    setAllToDefault();
+
+    teethSection.style.display = "flex";
+    btnContinue.style.display = "block";
+    btnContinue.textContent = "Select the Teeth";
+    sectionNum = 0;
+  }, 5000);
+}
+
+// Set appointment elements content
+function setSuccessAppointment() {
+  // get complete appointment elements
+  const teethContentEl = document.getElementsByClassName("success-teeth")[0];
+  const serviceContentEl =
+    document.getElementsByClassName("success-service")[0];
+  const doctorContentEl = document.getElementsByClassName("success-doctor")[0];
+  const dayContentEl = document.getElementsByClassName("success-day")[0];
+  const hourContentEl = document.getElementsByClassName("success-hour")[0];
+
+  // get needed texts
+  const seletectedTeethsText = appointment.teeth.join(" - ");
+  const selectedServiceText = appointment.service.text;
+  const selectedDoctorText = appointment.doctor.text;
+  const selectedDayText = getDateDesc(new Date(appointment.date), "");
+  const selectedHourText = appointment.time;
+
+  // Set elements content
+  teethContentEl.textContent = seletectedTeethsText;
+  serviceContentEl.textContent = selectedServiceText;
+  doctorContentEl.textContent = selectedDoctorText;
+  dayContentEl.textContent = selectedDayText;
+  hourContentEl.textContent = selectedHourText;
+}
+
+// Control whether all options are selected or not
+function controlNotSelected(notSelectedText) {
+  if (notSelectedText !== "") {
+    btnContinue.style.pointerEvents = "none";
+    callToAction.textContent = `${notSelectedText} ${
+      notSelectedText.split("&").length > 1 ? "are" : "is"
+    } not selected, please select ${
+      notSelectedText.split("&").length > 1 ? "them" : "it"
+    } first!`;
+
+    callToAction.style.padding = "0.25rem 0rem";
+    callToAction.style.backgroundColor = "red";
+    callToAction.style.color = "white";
+    callToAction.style.fontSize = "1rem";
+    callToAction.style.width = "50vw";
+    callToAction.style.textAlign = "center";
+    return;
+  } else {
+    resetDescTitle();
+
+    callToAction.textContent = "Please complete the appointment.";
+    return;
+  }
+}
+
+// Get not selected options' text
+function getNotSelectedText() {
+  let notSelectedText = "";
+  let toothNotSelectedText = "";
+  let serviceNotSelectedText = "";
+  let doctorNotSelectedText = "";
+
+  // control not selected options
+  appointment.teeth.length < 1 && (toothNotSelectedText = "Teeth");
+  Object.keys(appointment.service) < 1 && (serviceNotSelectedText = "Service");
+  Object.keys(appointment.doctor) < 1 && (doctorNotSelectedText = "Doctor");
+
+  notSelectedText =
+    `${toothNotSelectedText} ${serviceNotSelectedText} ${doctorNotSelectedText}`
+      .trim()
+      .replace(" ", " & ");
+
+  return notSelectedText;
+}
+
+// Set btns' styles to default
 function setBtnStylesToDefault() {
   btnBack.style.width = "14rem";
   btnContinue.style.width = "14rem";
+}
+
+// Activate | passivize success title
+function setDescTitle() {
+  callToAction.textContent = "Your appointment is ready!";
+  callToAction.style.margin = "2.75rem 0 2.25rem";
+  callToAction.style.padding = ".55rem 2.25rem";
+  callToAction.style.backgroundColor = "#7cffee";
+  callToAction.style.color = "#002b5b";
+  callToAction.style.width = "50vw";
+}
+function resetDescTitle() {
+  callToAction.textContent =
+    "Please select the teeth you want the treatment for.";
+  callToAction.style.margin = "1.75rem 0 1.25rem";
+  callToAction.style.padding = "0";
+  callToAction.style.backgroundColor = "transparent";
+  callToAction.style.color = "#002b5b";
+  callToAction.style.fontSize = "1.2rem";
+  callToAction.style.width = "auto";
+}
+
+// Handle btn back click
+btnBack.addEventListener("click", function (e) {
+  e.preventDefault();
+
+  // Go back to teeth selection
+  if (sectionNum === 1) {
+    backToTeethSection();
+    return;
+  }
+
+  // Go back to service selection
+  if (sectionNum === 2) {
+    backToServiceSection();
+    return;
+  }
+
+  // Go back to doctor selection
+  if (sectionNum === 3) {
+    backToDoctorSection();
+    return;
+  }
+
+  // Go back to date selection
+  if (sectionNum === 4) {
+    backToDateSection();
+    return;
+  }
+});
+
+// Back to teeth section
+function backToTeethSection() {
+  hideAllElse();
+
+  btnBack.style.display = "none";
+  teethSection.style.display = "flex";
+  btnContinue.textContent = "Select the Teeth";
+  callToAction.textContent =
+    "Please select the teeth you want the treatment for.";
+  sectionNum--;
+}
+
+// Back to service section
+function backToServiceSection() {
+  hideAllElse();
+
+  serviceSection.style.display = "flex";
+  btnBack.textContent = "Back to Teeth";
+  btnContinue.textContent = "Select the Service";
+  callToAction.textContent = "Please select the service you want to get.";
+  sectionNum--;
+}
+
+// Back to doctor section
+function backToDoctorSection() {
+  hideAllElse();
+
+  doctorSection.style.display = "flex";
+  btnBack.textContent = "Back to Service";
+  btnContinue.textContent = "Select the Doctor";
+  callToAction.textContent = "Please select the doctor you want to choose.";
+  sectionNum--;
+}
+
+// Back to date section
+function backToDateSection() {
+  hideAllElse();
+
+  dateSection.style.display = "flex";
+  btnBack.textContent = "Back to Doctor";
+  btnContinue.textContent = "Select the Date";
+  btnContinue.style.pointerEvents = "visible";
+  callToAction.textContent =
+    "Please select the day & hour you want the appointment in.";
+  sectionNum--;
+
+  resetDescTitle();
+  setBtnStylesToDefault();
+}
+
+// Hide all sections - teeth, service, doctor and date
+function hideAllElse() {
+  teethSection.style.display = "none";
+  serviceSection.style.display = "none";
+  doctorSection.style.display = "none";
+  dateSection.style.display = "none";
+  successSection.style.display = "none";
 }
 
 // Set all values to default
@@ -535,105 +726,4 @@ function setAllToDefault() {
 
   setClickedTimesDefault();
   setFirstTimeActive();
-}
-
-// Success title activation & passivization
-function activateSuccessTitle() {
-  callToAction.textContent = "Your appointment is ready!";
-  callToAction.style.margin = "2.75rem 0 2.25rem";
-  callToAction.style.padding = ".5rem 2.25rem";
-  callToAction.style.backgroundColor = "#002b5b";
-  callToAction.style.color = "white";
-}
-function passivizeSuccessTitle() {
-  callToAction.textContent =
-    "Please select the teeth you want the treatment for.";
-  callToAction.style.margin = "1.75rem 0 1.25rem";
-  callToAction.style.padding = "0";
-  callToAction.style.backgroundColor = "transparent";
-  callToAction.style.color = "#002b5b";
-}
-
-// Set appointment elements content
-function setSuccessAppointment() {
-  const teethContentEl = document.getElementsByClassName("success-teeth")[0];
-  const serviceContentEl =
-    document.getElementsByClassName("success-service")[0];
-  const doctorContentEl = document.getElementsByClassName("success-doctor")[0];
-  const dayContentEl = document.getElementsByClassName("success-day")[0];
-  const hourContentEl = document.getElementsByClassName("success-hour")[0];
-
-  // teethContentEl.textContent = appointment
-  const successCustomTeeths = appointment.teeth.join(" - ");
-  const successCustomService = appointment.service.text;
-  const successCustomDoctor = appointment.doctor.text;
-  const successCustomDay = getDateDesc(new Date(appointment.date), "");
-  const successCustomHour = appointment.time;
-
-  teethContentEl.textContent = successCustomTeeths;
-  serviceContentEl.textContent = successCustomService;
-  doctorContentEl.textContent = successCustomDoctor;
-  dayContentEl.textContent = successCustomDay;
-  hourContentEl.textContent = successCustomHour;
-}
-
-// Handling back button
-btnBack.addEventListener("click", function (e) {
-  e.preventDefault();
-
-  // Go back to service selection
-  if (sectionNum === 1) {
-    hideAllElse();
-    btnBack.style.display = "none";
-    teethSection.style.display = "flex";
-    btnContinue.textContent = "Select the Teeth";
-
-    sectionNum--;
-    return;
-  }
-
-  // Go back to doctor selection
-  if (sectionNum === 2) {
-    hideAllElse();
-    serviceSection.style.display = "flex";
-    btnBack.textContent = "Back to Teeth";
-    btnContinue.textContent = "Select the Service";
-
-    sectionNum--;
-    return;
-  }
-
-  // Go back to doctor selection
-  if (sectionNum === 3) {
-    hideAllElse();
-    doctorSection.style.display = "flex";
-    btnBack.textContent = "Back to Service";
-    btnContinue.textContent = "Select the Doctor";
-
-    sectionNum--;
-    return;
-  }
-
-  // Go back to doctor selection
-  if (sectionNum === 4) {
-    hideAllElse();
-    dateSection.style.display = "flex";
-    btnBack.textContent = "Back to Doctor";
-    btnContinue.textContent = "Select the Date";
-    btnContinue.style.pointerEvents = "visible";
-
-    setBtnStylesToDefault();
-
-    sectionNum--;
-    return;
-  }
-});
-
-// Hide all sections - teeth, service, doctor and date
-function hideAllElse() {
-  teethSection.style.display = "none";
-  serviceSection.style.display = "none";
-  doctorSection.style.display = "none";
-  dateSection.style.display = "none";
-  successSection.style.display = "none";
 }
